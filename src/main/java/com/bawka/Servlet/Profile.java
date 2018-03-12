@@ -1,10 +1,8 @@
 package com.bawka.Servlet;
 
 import com.bawka.InstaService;
+import com.bawka.Service.JsonParser;
 import com.bawka.Service.UserService;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.JSONValue;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -14,7 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.ArrayList;
 
-@WebServlet("/profile/")
+@WebServlet("/profile/*")
 public class Profile extends HttpServlet {
     InstaService insta = new InstaService();
     UserService userService= new UserService();
@@ -24,6 +22,8 @@ public class Profile extends HttpServlet {
     String userpic = null;
     String token="";
     ArrayList<String>userHashtags = null;
+    ArrayList<String>images = null;
+    String hashtag = null;
     Long uid;
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -35,20 +35,41 @@ public class Profile extends HttpServlet {
                 userHashtags = userService.getUserHashtags(uid);
                 token = userService.getToken(uid);
                 json = insta.getUser(token);
-                JSONObject jsonObject = (JSONObject)JSONValue.parse(json);
-                jsonObject = (JSONObject)jsonObject.get("data");
-                System.out.println(jsonObject.get("full_name").toString());
-                System.out.println(jsonObject.get("profile_picture"));
-                username = jsonObject.get("username").toString();
-                userpic = jsonObject.get("profile_picture").toString();
+                username = JsonParser.getUserName(json);
+                userpic = JsonParser.getUserPic(json);
             }
             catch (Exception ex){ex.printStackTrace();}
-            //json = insta.getMediaByHashTag("крафтэтовойна",token);
-            //JSONObject jsonObject = new JSONObject(json);
-            //jsonObject.entrySet().toArray()[0].toString();
-           // resp.getWriter().write(json);
-            getProfile();
-           resp.getWriter().write(html);
+            try{
+                hashtag = req.getParameter("tagname");
+            }
+            catch (NullPointerException ex){ex.printStackTrace();}
+
+            try{
+                if (hashtag!=null)
+                {
+                    images = JsonParser.getMediaByHashTag(insta.getMediaByHashTag(hashtag,token));
+                    html = "<html>"
+                            +"<head>"
+                            +"<title>PROFILE</title>"
+                            +"</head>"
+                            +"<body>"
+                            +getHashMediaBlock(images)
+                            +"<a href=\"/logout/\">logout</a>"
+                            +"</body>"
+                            +"</html>";
+                    resp.getWriter().write(html);
+                }
+                else {
+                   // json = insta.getMediaByHashTag("testtag",token);
+                    getProfile();
+                    resp.getWriter().write(html);
+                }
+            }
+            catch (NullPointerException ex){ex.printStackTrace();}
+
+
+
+
         }
         else resp.sendRedirect("/login/");
 
@@ -68,6 +89,8 @@ public class Profile extends HttpServlet {
                 +"<h1>"+username+"</h1>"
                 +"<img  src=\""+ userpic+"\">"
                 +getHashtagblock(userHashtags)
+                +"<br/>"
+                //+getHashMediaBlock(images)
                 +"<a href=\"/logout/\">logout</a>"
                 +"</body>"
                 +"</html>";
@@ -78,26 +101,20 @@ public class Profile extends HttpServlet {
         String line="";
         for (String hashtag:userHashtags
              ) {
-            //System.out.println(hashtag);
-            line+="<div class=\"hashtag\"><a href=\"#\">#"+hashtag+" </a><div>";
+            line+="<div class=\"hashtag\"><a href=\"/profile?tagname="+hashtag+"\">#"+hashtag+" </a></div>";
         }
-        //System.out.println(line);
         return line;
     }
-    private String getMediaByHashtag(String hashtag)
+    private String getHashMediaBlock(ArrayList<String>imglist)
     {
-        html = "<html>"
-                +"<head>"
-                +"<title>PROFILE</title>"
-                +"</head>"
-                +"<body>"
-                +"<h1>"+username+"</h1>"
-                +"<img  src=\""+ userpic+"\">"
-                +getHashtagblock(userHashtags)
-                +"<a href=\"/logout/\">logout</a>"
-                +"</body>"
-                +"</html>";
-        return html;
+        String line = "";
+        for (String img:imglist
+             ) {
+            line+="<div class=\"image\"><img src=\""+img+"\"></img> </div>";
+        }
+        return line;
     }
+
+
 
 }

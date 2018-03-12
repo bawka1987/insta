@@ -27,7 +27,7 @@ public class InstaService {
     HttpResponse response = null;
     public static String getAuthUrl()
     {
-       return  "https://api.instagram.com/oauth/authorize/?client_id="+ CLIENT_ID+"&redirect_uri="+ REDIRECT_URI+"&response_type=code";//+"&scope=basic+public_content";
+       return  "https://api.instagram.com/oauth/authorize/?client_id="+ CLIENT_ID+"&redirect_uri="+ REDIRECT_URI+"&response_type=code"+"&scope=basic+public_content";
 
     }
     public String getTokenRequest(String secret)
