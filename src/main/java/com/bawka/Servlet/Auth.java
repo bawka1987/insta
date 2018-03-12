@@ -30,7 +30,7 @@ else  resp.sendRedirect("/profile/");
     void authorize(HttpServletRequest req, HttpServletResponse resp){
         UserService userService = new UserService();
         String token=null;
-        int user_id=-1;
+        Long user_id=-1L;
         String code = req.getParameter("code");
         InstaService insta = new InstaService();
         String json = insta.getTokenRequest(code);
@@ -41,7 +41,7 @@ else  resp.sendRedirect("/profile/");
             json=insta.getUser(token);
             jsonObject = (JSONObject)JSONValue.parse(json);
             jsonObject = (JSONObject)jsonObject.get("data");
-            user_id = Integer.parseInt(jsonObject.get("id").toString());
+            user_id = Long.parseLong(jsonObject.get("id").toString());
             req.getSession().setAttribute("uid",user_id);
             //System.out.println("uid:"+req.getSession().getAttribute("uid"));
         }

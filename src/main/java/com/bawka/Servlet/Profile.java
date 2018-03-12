@@ -24,31 +24,31 @@ public class Profile extends HttpServlet {
     String userpic = null;
     String token="";
     ArrayList<String>userHashtags = null;
-    int uid;
+    Long uid;
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
         if (req.getSession().getAttribute("uid")!=null)
         {
             try{
-                uid = (Integer)req.getSession().getAttribute("uid");
+                uid = (Long)req.getSession().getAttribute("uid");
                 userHashtags = userService.getUserHashtags(uid);
                 token = userService.getToken(uid);
                 json = insta.getUser(token);
                 JSONObject jsonObject = (JSONObject)JSONValue.parse(json);
                 jsonObject = (JSONObject)jsonObject.get("data");
-                //System.out.println(jsonObject.get("full_name").toString());
-                //System.out.println(jsonObject.get("profile_picture"));
+                System.out.println(jsonObject.get("full_name").toString());
+                System.out.println(jsonObject.get("profile_picture"));
                 username = jsonObject.get("username").toString();
                 userpic = jsonObject.get("profile_picture").toString();
             }
             catch (Exception ex){ex.printStackTrace();}
-            json = insta.getMediaByHashTag("крафтэтовойна",token);
+            //json = insta.getMediaByHashTag("крафтэтовойна",token);
             //JSONObject jsonObject = new JSONObject(json);
             //jsonObject.entrySet().toArray()[0].toString();
-            resp.getWriter().write(json);
-            //getProfile();
-           //resp.getWriter().write(html);
+           // resp.getWriter().write(json);
+            getProfile();
+           resp.getWriter().write(html);
         }
         else resp.sendRedirect("/login/");
 

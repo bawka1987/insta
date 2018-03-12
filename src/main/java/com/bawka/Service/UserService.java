@@ -13,7 +13,7 @@ public class UserService extends Util implements UserDAO {
 Connection connection = null;
 PreparedStatement statement = null;
 ResultSet resultSet = null;
-    public boolean userExist(int id) {
+    public boolean userExist(Long id) {
         boolean flag=false;
         connection = getConnection();
         ResultSet resultSet = null;
@@ -21,7 +21,7 @@ ResultSet resultSet = null;
         try
         {
             statement = connection.prepareStatement(query);
-            statement.setInt(1,id);
+            statement.setLong(1,id);
             resultSet=statement.executeQuery();
             flag=resultSet.next();
         }
@@ -37,13 +37,13 @@ ResultSet resultSet = null;
         return flag;
     }
 
-    public void userAdd(int id, String token) {
+    public void userAdd(Long id, String token) {
         connection = getConnection();
         String query = "insert into users (id,token) values (?,?)";
         try
         {
             statement = connection.prepareStatement(query);
-            statement.setInt(1,id);
+            statement.setLong(1,id);
             statement.setString(2,token);
             statement.execute();
         }
@@ -56,7 +56,7 @@ ResultSet resultSet = null;
             catch (SQLException ex){ex.printStackTrace();}
         }
     }
-    public String getToken(int id)
+    public String getToken(Long id)
     {
         connection = getConnection();
         String query = "select * from insta.users where id=?";
@@ -64,7 +64,7 @@ ResultSet resultSet = null;
         try
         {
             statement = connection.prepareStatement(query);
-            statement.setInt(1,id);
+            statement.setLong(1,id);
             resultSet = statement.executeQuery();
             //System.out.println(id);
             while (resultSet.next())
@@ -83,14 +83,14 @@ ResultSet resultSet = null;
         }
         return token;
     }
-    public void updateToken(int id,String token)
+    public void updateToken(Long id,String token)
     {
         connection = getConnection();
         String query = "update users set token=? where id=?";
         try{
             statement = connection.prepareStatement(query);
             statement.setString(1,token);
-            statement.setInt(2,id);
+            statement.setLong(2,id);
             statement.execute();
         }
         catch (SQLException ex){ex.printStackTrace();}
@@ -103,7 +103,7 @@ ResultSet resultSet = null;
             catch (SQLException ex){ex.printStackTrace();}
         }
     }
-    public ArrayList<String>getUserHashtags(int id)
+    public ArrayList<String>getUserHashtags(Long id)
     {
         ArrayList<String>userHashtags = new ArrayList<String>();
         connection = getConnection();
@@ -111,7 +111,7 @@ ResultSet resultSet = null;
         try
         {
             statement = connection.prepareStatement(query);
-            statement.setInt(1,id);
+            statement.setLong(1,id);
             resultSet = statement.executeQuery();
             while (resultSet.next())
             {

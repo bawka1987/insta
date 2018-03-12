@@ -2,6 +2,6 @@ package com.bawka.DAO;
 
 
 public interface UserDAO {
-    boolean userExist(int id);
-    void userAdd(int id, String token);
+    boolean userExist(Long id);
+    void userAdd(Long id, String token);
 }
