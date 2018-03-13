@@ -40,23 +40,14 @@ public class Profile extends HttpServlet {
             }
             catch (Exception ex){ex.printStackTrace();}
             try{
-                hashtag = req.getParameter("tagname");
+                hashtag = req.getParameter("tagname"); //Проверяем, есть ли парамер hashtag
             }
             catch (NullPointerException ex){ex.printStackTrace();}
 
             try{
-                if (hashtag!=null)
+                if (hashtag!=null) //Если хэштэг указан - рисуем картинки
                 {
-                    images = JsonParser.getMediaByHashTag(insta.getMediaByHashTag(hashtag,token));
-                    html = "<html>"
-                            +"<head>"
-                            +"<title>PROFILE</title>"
-                            +"</head>"
-                            +"<body>"
-                            +getHashMediaBlock(images)
-                            +"<a href=\"/logout/\">logout</a>"
-                            +"</body>"
-                            +"</html>";
+                    renderMediaByHashtag();
                     resp.getWriter().write(html);
                 }
                 else {
@@ -65,7 +56,9 @@ public class Profile extends HttpServlet {
                     resp.getWriter().write(html);
                 }
             }
-            catch (NullPointerException ex){ex.printStackTrace();}
+            catch (NullPointerException ex){
+                System.err.println("hashtag is NULL");
+            }
 
 
 
@@ -79,7 +72,7 @@ public class Profile extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         super.doPost(req, resp);
     }
-    private void getProfile()
+    private void getProfile() //PROFILE/*
     {
         html = "<html>"
                 +"<head>"
@@ -94,9 +87,8 @@ public class Profile extends HttpServlet {
                 +"<a href=\"/logout/\">logout</a>"
                 +"</body>"
                 +"</html>";
-        //return html;
     }
-    private String getHashtagblock(ArrayList<String> userHashtags)
+    private String getHashtagblock(ArrayList<String> userHashtags) //РЕНДЕР ОБЛАКА ХЭШТЕГОВ
     {
         String line="";
         for (String hashtag:userHashtags
@@ -105,7 +97,7 @@ public class Profile extends HttpServlet {
         }
         return line;
     }
-    private String getHashMediaBlock(ArrayList<String>imglist)
+    private String getHashMediaBlock(ArrayList<String>imglist) //РЭНДЕР БЛОКОВ С КАРТИНКАМИ
     {
         String line = "";
         for (String img:imglist
@@ -113,6 +105,19 @@ public class Profile extends HttpServlet {
             line+="<div class=\"image\"><img src=\""+img+"\"></img> </div>";
         }
         return line;
+    }
+    private void renderMediaByHashtag()
+    {
+        images = JsonParser.getMediaByHashTag(insta.getMediaByHashTag(hashtag,token));
+        html = "<html>"
+                +"<head>"
+                +"<title>"+hashtag+"</title>"
+                +"</head>"
+                +"<body>"
+                +getHashMediaBlock(images)
+                +"<a href=\"/logout/\">logout</a>"
+                +"</body>"
+                +"</html>";
     }
 
 
