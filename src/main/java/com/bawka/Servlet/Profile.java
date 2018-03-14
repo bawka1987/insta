@@ -1,7 +1,9 @@
 package com.bawka.Servlet;
 
 import com.bawka.InstaService;
+import com.bawka.Model.Picture;
 import com.bawka.Service.JsonParser;
+import com.bawka.Service.PicService;
 import com.bawka.Service.UserService;
 
 import javax.servlet.ServletException;
@@ -16,13 +18,14 @@ import java.util.ArrayList;
 public class Profile extends HttpServlet {
     InstaService insta = new InstaService();
     UserService userService= new UserService();
+    PicService picService = new PicService();
     String html = "";
     String json = null;
     String username = null;
     String userpic = null;
     String token="";
     ArrayList<String>userHashtags = null;
-    ArrayList<String>images = null;
+    ArrayList<Picture>images = null;
     String hashtag = null;
     Long uid;
     @Override
@@ -47,8 +50,11 @@ public class Profile extends HttpServlet {
             try{
                 if (hashtag!=null) //Если хэштэг указан - рисуем картинки
                 {
-                    renderMediaByHashtag();
-                    resp.getWriter().write(html);
+                    //renderMediaByHashtag();
+                    //resp.getWriter().write(html);
+                    getMedaiByHashtag();
+                    req.setAttribute("images",images);
+                    req.getRequestDispatcher("/test.jsp").forward(req,resp);
                 }
                 else {
                    // json = insta.getMediaByHashTag("testtag",token);
@@ -97,18 +103,19 @@ public class Profile extends HttpServlet {
         }
         return line;
     }
-    private String getHashMediaBlock(ArrayList<String>imglist) //РЭНДЕР БЛОКОВ С КАРТИНКАМИ
+    private String getHashMediaBlock(ArrayList<Picture>imglist) //РЭНДЕР БЛОКОВ С КАРТИНКАМИ
     {
         String line = "";
-        for (String img:imglist
+        for (Picture pic:imglist
              ) {
-            line+="<div class=\"image\"><img src=\""+img+"\"></img> </div>";
+            line+="<div class=\"image\"><img src=\""+pic.getUrl()+"\"></img> </div>";
         }
         return line;
     }
     private void renderMediaByHashtag()
     {
-        images = JsonParser.getMediaByHashTag(insta.getMediaByHashTag(hashtag,token));
+        //images = JsonParser.getMediaByHashTag(insta.getMediaByHashTag(hashtag,token));
+        images = picService.getPic(hashtag);
         html = "<html>"
                 +"<head>"
                 +"<title>"+hashtag+"</title>"
@@ -118,6 +125,10 @@ public class Profile extends HttpServlet {
                 +"<a href=\"/logout/\">logout</a>"
                 +"</body>"
                 +"</html>";
+    }
+    private void getMedaiByHashtag()
+    {
+        images = picService.getPic(hashtag);
     }
 
 

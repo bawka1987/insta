@@ -91,9 +91,9 @@ public class InstaService {
         public String getMediaByHashTag(String tagname,String token)
         {
             String json = null;
-            String count = "20";
+            String count = "10";
             HttpGet request = new HttpGet("https://api.instagram.com/v1/tags/"+tagname+"/media/recent?access_token="+token+"&count="+count);
-            //System.out.println(request);
+            System.out.println(request);
             try{
                 response = client.execute(request);
                 entity = response.getEntity();

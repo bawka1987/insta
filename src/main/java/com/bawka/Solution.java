@@ -2,19 +2,27 @@ package com.bawka;
 
 
 import com.bawka.Service.JsonParser;
+import com.bawka.Service.PicService;
 import com.bawka.Service.UserService;
+import org.apache.velocity.Template;
+import org.apache.velocity.VelocityContext;
+import org.apache.velocity.app.Velocity;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 
+import java.io.BufferedWriter;
+import java.io.ByteArrayOutputStream;
+import java.io.OutputStreamWriter;
+
 public class Solution{
 
     public static void main (String[] args) throws Exception {
-        UserService userService = new UserService();
-        String json = "{\"pagination\": {\"next_min_id\": \"AQCRQlIaMj_SAqc--R3bPSBw7cyIlhVh34jyznKEqB__lSB-948gEgWsH1AvCWxVxd5Xz98Q-hOmy-rM38BK8a-68ZT9kVhEGWnDnHngWlpX3A\", \"min_tag_id\": \"AQCRQlIaMj_SAqc--R3bPSBw7cyIlhVh34jyznKEqB__lSB-948gEgWsH1AvCWxVxd5Xz98Q-hOmy-rM38BK8a-68ZT9kVhEGWnDnHngWlpX3A\", \"deprecation_warning\": \"next_max_id and min_id are deprecated for this endpoint; use min_tag_id and max_tag_id instead\"}, \"data\": [{\"id\": \"1733340526345063422_7205892065\", \"user\": {\"id\": \"7205892065\", \"full_name\": \"bawka\", \"profile_picture\": \"https://scontent-sit4-1.cdninstagram.com/vp/b8b009adb19b9aa0d50ec224d9017462/5B453F7A/t51.2885-19/11906329_960233084022564_1448528159_a.jpg\", \"username\": \"bawka2018\"}, \"images\": {\"thumbnail\": {\"width\": 150, \"height\": 150, \"url\": \"https://scontent.cdninstagram.com/vp/ab5c150f5e8547b45253cf65e4299a99/5B3D18B8/t51.2885-15/s150x150/e35/28766528_353710265131535_6198079738787921920_n.jpg\"}, \"low_resolution\": {\"width\": 320, \"height\": 320, \"url\": \"https://scontent.cdninstagram.com/vp/bac6949cf338bdebd5668c6e29ca455a/5B3632FF/t51.2885-15/s320x320/e35/28766528_353710265131535_6198079738787921920_n.jpg\"}, \"standard_resolution\": {\"width\": 640, \"height\": 640, \"url\": \"https://scontent.cdninstagram.com/vp/b291f6bf193c427b4380100cbbcc0801/5B4B3DBC/t51.2885-15/s640x640/sh0.08/e35/28766528_353710265131535_6198079738787921920_n.jpg\"}}, \"created_time\": \"1520850314\", \"caption\": {\"id\": \"17930049256005500\", \"text\": \"#testtag\", \"created_time\": \"1520850314\", \"from\": {\"id\": \"7205892065\", \"full_name\": \"bawka\", \"profile_picture\": \"https://scontent-sit4-1.cdninstagram.com/vp/b8b009adb19b9aa0d50ec224d9017462/5B453F7A/t51.2885-19/11906329_960233084022564_1448528159_a.jpg\", \"username\": \"bawka2018\"}}, \"user_has_liked\": false, \"likes\": {\"count\": 0}, \"tags\": [\"testtag\"], \"filter\": \"Normal\", \"comments\": {\"count\": 0}, \"type\": \"image\", \"link\": \"https://www.instagram.com/p/BgOEAZrlgv-/\", \"location\": null, \"attribution\": null, \"users_in_photo\": []}, {\"id\": \"1733340357297704512_7205892065\", \"user\": {\"id\": \"7205892065\", \"full_name\": \"bawka\", \"profile_picture\": \"https://scontent-sit4-1.cdninstagram.com/vp/b8b009adb19b9aa0d50ec224d9017462/5B453F7A/t51.2885-19/11906329_960233084022564_1448528159_a.jpg\", \"username\": \"bawka2018\"}, \"images\": {\"thumbnail\": {\"width\": 150, \"height\": 150, \"url\": \"https://scontent.cdninstagram.com/vp/16a2beecc710edd423977bd86890ed58/5B4B9D2C/t51.2885-15/s150x150/e35/28753384_214308099313824_7284589070334820352_n.jpg\"}, \"low_resolution\": {\"width\": 320, \"height\": 320, \"url\": \"https://scontent.cdninstagram.com/vp/7a8005bdde0f1a68b01bac4dc3fbecde/5B36B86B/t51.2885-15/s320x320/e35/28753384_214308099313824_7284589070334820352_n.jpg\"}, \"standard_resolution\": {\"width\": 640, \"height\": 640, \"url\": \"https://scontent.cdninstagram.com/vp/56f8390d9188f9f9acfd03004a7f0536/5B30C428/t51.2885-15/s640x640/sh0.08/e35/28753384_214308099313824_7284589070334820352_n.jpg\"}}, \"created_time\": \"1520850294\", \"caption\": {\"id\": \"17912188351094087\", \"text\": \"#testtag\", \"created_time\": \"1520850294\", \"from\": {\"id\": \"7205892065\", \"full_name\": \"bawka\", \"profile_picture\": \"https://scontent-sit4-1.cdninstagram.com/vp/b8b009adb19b9aa0d50ec224d9017462/5B453F7A/t51.2885-19/11906329_960233084022564_1448528159_a.jpg\", \"username\": \"bawka2018\"}}, \"user_has_liked\": false, \"likes\": {\"count\": 0}, \"tags\": [\"testtag\"], \"filter\": \"Normal\", \"comments\": {\"count\": 0}, \"type\": \"image\", \"link\": \"https://www.instagram.com/p/BgOD98PlA5A/\", \"location\": null, \"attribution\": null, \"users_in_photo\": []}], \"meta\": {\"code\": 200}}";
-        JsonParser.getMediaByHashTag(json);
+//        PicService picService = new PicService();
+//        System.out.println(picService.getPic("testtag"));
 
         }
+
 
     }
 
